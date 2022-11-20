@@ -1,0 +1,158 @@
+async function randomRest(minRestMs, maxRestMs) {
+  var restMs = Math.random() * (maxRestMs - minRestMs) + minRestMs;
+  await new Promise(r => setTimeout(r, restMs));
+}
+
+function saveTextFile(txt, filename) {
+  var a = document.createElement('a');
+  var file = new Blob( [txt], {type: 'text/plain'} );
+  
+  a.href = URL.createObjectURL(file);
+  a.download = filename;
+  a.click();
+
+	URL.revokeObjectURL(a.href);
+  a.remove();
+}
+
+function getPageType() {
+  var winUrl = window.location.href;
+  
+  var pageType;
+  
+  if (winUrl.startsWith('https://twitter.com/')) {
+    if (winUrl.endsWith('/following')) {
+      pageType = 'followingOnTwitter';
+    }
+    else if (winUrl.endsWith('/followers')) { 
+      pageType = 'followersOnTwitter';
+    }
+  }
+  
+  return pageType;
+}
+
+function getTwitterMainColumn() {
+  var elms = document.querySelectorAll('div[data-testid="primaryColumn"]');
+  
+  if (elms && elms.length == 1) {
+    return elms[0];
+  }
+  else {
+    console.warn('Cannot find twitter main column; page structure may have changed.');
+  }
+}
+
+function getTwitterFollowsPage(mainColumn, cumUrlSet) {
+
+  var all = Array.from(mainColumn.getElementsByTagName('a')).map(function(a) {
+    return { u: a.getAttribute('href'), d: a.innerText };
+  });
+
+  var handles = all.filter(function(a) {
+    return a.u.startsWith('/') && a.d.startsWith('@');
+  });
+  
+  var urlSet = new Set(handles.map(function(h) { return h.u }));
+  
+  var ppl = [];
+  
+  for(let i=0; i < all.length; i++) {
+    var item = all[i];
+    
+    if (item.u && urlSet.has(item.u) && item.d && !item.d.startsWith('@')) {
+      if (!cumUrlSet.has(item.u)) {
+        var per = { h: '@' + item.u.substring(1), d: item.d };
+        ppl.push(per);
+        cumUrlSet.add(item.u);
+      }
+    }
+  }
+  
+  console.table(ppl);
+  return ppl;
+}
+
+// returns true if more remain
+async function saveTwitterFollowsBatch(owner, pageType, mainColumn, minRest, maxRest, maxPages) {
+  var cumUrlSet = new Set();
+  var allFollows = [];
+  var hasMore = true;
+  
+  for(let i=0; i < maxPages; i++) {
+    var pageFollows = getTwitterFollowsPage(mainColumn, cumUrlSet);
+
+    if (pageFollows.length == 0) {
+      console.warn('checking for false end');
+      // try a tiny scroll then resting again before declaring us done
+      await randomRest(minRest, maxRest);
+      window.scrollBy(0, screen.availHeight * 0.2);
+      await randomRest(minRest * 2, maxRest * 2);
+      pageFollows = getTwitterFollowsPage(mainColumn, cumUrlSet);
+
+      if (pageFollows.length == 0) {
+        hasMore = false;
+        break;
+      }
+    }
+
+    if (pageFollows.length > 0) {
+      allFollows.push(...pageFollows);
+    }
+
+    window.scrollBy(0, screen.availHeight * 0.8);
+    await randomRest(minRest, maxRest);
+  }
+  
+  if (allFollows.length == 0) {
+    return false;
+  }
+  
+  var fileName = pageType + '-' + owner + '.txt';
+  var result = { owner: owner, type: pageType, records: allFollows };
+  var json = JSON.stringify(result, null, 2);
+  console.log(json);
+  saveTextFile(json, fileName);
+
+  window.scrollBy(0, screen.availHeight * 0.8);
+  await randomRest(minRest, maxRest);
+  
+  return hasMore;
+}
+
+async function recordTwitterFollows(pageType, minRest, maxRest, maxPagesPerBatch) {
+  var winUrlParts = window.location.href.split('/');
+  var owner = winUrlParts[winUrlParts.length - 2];
+  
+  var mainColumn = getTwitterMainColumn();
+  if (!mainColumn) { return; }
+  
+  console.clear();
+  console.log(owner);
+  console.log(pageType);
+  
+  let hasMore = true;
+  
+  do {
+    hasMore = await saveTwitterFollowsBatch(owner, pageType, mainColumn, minRest, maxRest, maxPagesPerBatch);
+  } while (hasMore == true);
+}
+
+async function main() {
+  var pageType = getPageType();
+  
+  // expecting about 10 per page, so maxPagesPerBatch of 20 would fetch about 200 before saving one file
+  const minRest = 500;  // milliseconds
+  const maxRest = 1500;
+  const maxPagesPerBatch = 20;
+  
+  switch (pageType) {
+    case 'followingOnTwitter':
+    case 'followersOnTwitter':
+      recordTwitterFollows(pageType, minRest, maxRest, maxPagesPerBatch);
+      break;
+    default:
+  }
+};
+
+main();
