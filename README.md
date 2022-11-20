@@ -1,2 +1,2 @@
 # SocialHistorian
-Utilities to aid social network portability
+Utilities to aid social network portability.
