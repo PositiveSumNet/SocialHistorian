@@ -1,7 +1,7 @@
 # SocialHistorian
 Utilities to aid social network portability.
 
-## Manifesto
+## Statement of Need
 [Human-centric networking](https://scafaria.com/planning-the-human-centric-web-1bcd2b275a81) requires portability of our social connections. Social networks are required by the laws of multiple countries to give you access to an archive of your data. However, after waiting up to a day for your archive file (if it ever arrives), you will find (in the case of Twitter) that it contains only IDs of the relationships that you forged. Those IDs are only usable within the system itself, falling short of the requirement to repatriate your data.
 
 Sure, there are third-party applications who will provide your own data back to you, usually for a fee. All you have to do is trust them with access to your account. This is crazy. You're scrolling through your data every day. It would be securely preserved for free if you (a) had a photographic memory or (b) took a recording of yourself scrolling through your follower lists. 
