@@ -20,3 +20,7 @@ This is open-source free-to-use code to scroll through your follower list while 
 8. Paste the code that's on your clipboard and hit Enter to run it!
 9. If you're using Firefox, you'll be asked to consent to pasting code. If you're using Chrome or Edge, you'll be asked (within about a minute) whether to allow downloading multiple files. Please agree to continue.
 10. Once you're done scrolling through your list, TADA! You should have a set of files in your 'downloads' folder. Coming soon - we'll help you get this list into an Excel format and to connect with your friends even when they use other networks!
+
+## Manual option
+The most conservative approach from a terms-of-use standpoint is to scroll manually. If you're a stickler, you can achieve this by finding the lines that start with
+"window.scrollBy" and add to slashes in front of them "// window.scrollBy". Then sroll a bit manually every second or so. 
