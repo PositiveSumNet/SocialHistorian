@@ -16,7 +16,7 @@ This is open-source free-to-use code to scroll through your follower list while 
 4. Open your browser's [console window](https://appuals.com/open-browser-console/) or via the key combination Ctrl + Shift + I for windows or Command + Option + K for Mac. (Note: Tested in Chrome, Edge, and Firefox; if you can know the fix for Safari, please let us know, thanks.)
 5. Copy the code from [here](https://raw.githubusercontent.com/PositiveSumNet/SocialHistorian/main/Twitter/follows.txt) to your clipboard. 
 6. Reminder to review code carefully before running it. As you'll see, this code sends *no data* externally. 
-7. Place your cursor at the console run line as indicated [here](https://github.com/PositiveSumNet/SocialHistorian/issues/1).
+7. Place your cursor at the console run line as indicated [here](https://github.com/PositiveSumNet/SocialHistorian/issues/1). You might have to scroll down in the console window until you see it (down below any warning/error messages).
 8. Paste the code that's on your clipboard and hit Enter to run it!
 9. If you're using Firefox, you'll be asked to consent to pasting code. If you're using Chrome or Edge, you'll be asked (within about a minute) whether to allow downloading multiple files. Please agree to continue.
 10. Once you're done scrolling through your list, TADA! You should have a set of files in your 'downloads' folder. Coming soon - we'll help you get this list into an Excel format and to connect with your friends even when they use other networks!
